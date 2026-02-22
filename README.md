@@ -57,7 +57,7 @@ Här är en färdig .desktop fil som ska ligga här /usr/share/applications/com.
 ```bash
 [Desktop Entry]
 Name=IP Applet
-Comment=Visar nätverks-IP i panelen
+Comment=Shows IP addresses in COSMIC panel
 Exec=cosmic-ip-applet
 Icon=network-wired-symbolic
 Terminal=false
