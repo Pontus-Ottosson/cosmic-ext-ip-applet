@@ -78,13 +78,13 @@ pub enum TextColor {
 impl TextColor {
     pub fn label(&self) -> &str {
         match self {
-            TextColor::Default => "Standard (tema)",
-            TextColor::White => "Vit",
-            TextColor::Green => "Grön",
+            TextColor::Default => "Standard (theme)",
+            TextColor::White => "White",
+            TextColor::Green => "Green",
             TextColor::Cyan => "Cyan",
-            TextColor::Yellow => "Gul",
+            TextColor::Yellow => "Yellow",
             TextColor::Orange => "Orange",
-            TextColor::Red => "Röd",
+            TextColor::Red => "Red",
         }
     }
 

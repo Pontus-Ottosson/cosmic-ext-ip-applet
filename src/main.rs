@@ -58,7 +58,7 @@ impl cosmic::Application for IpApplet {
         let app = Self {
             core, popup: None, main_window_id,
             network_ips: HashMap::new(),
-            public_ip: "Hamtar...".to_string(),
+            public_ip: "Fetching...".to_string(),
             config: Config::default(),
             active_tab: SettingsTab::Info,
         };
@@ -125,11 +125,11 @@ impl cosmic::Application for IpApplet {
     fn view_window(&self, _id: Id) -> Element<'_, Self::Message> {
         let info_sel = self.active_tab == SettingsTab::Info;
         let tab_bar = cosmic::widget::row::with_children(vec![
-            cosmic::widget::button::text(if info_sel { "* IP-adresser" } else { "  IP-adresser" })
+            cosmic::widget::button::text(if info_sel { "* IP addresses" } else { "  IP addresses" })
                 .on_press(Message::SetActiveTab(SettingsTab::Info))
                 .class(if info_sel { cosmic::theme::Button::Suggested } else { cosmic::theme::Button::Text })
                 .into(),
-            cosmic::widget::button::text(if !info_sel { "* Installningar" } else { "  Installningar" })
+            cosmic::widget::button::text(if !info_sel { "* Settings" } else { "  Settings" })
                 .on_press(Message::SetActiveTab(SettingsTab::Settings))
                 .class(if !info_sel { cosmic::theme::Button::Suggested } else { cosmic::theme::Button::Text })
                 .into(),
@@ -180,7 +180,7 @@ impl IpApplet {
 
         if self.config.show_public_ip {
             has_any = true;
-            let label = cosmic::widget::text("Publik IP").size(11)
+            let label = cosmic::widget::text("Public IP").size(11)
                 .class(cosmic::theme::Text::Color(Color::from_rgb(0.55, 0.55, 0.55)));
             let val = match uc {
                 Some(c) => cosmic::widget::text(self.public_ip.as_str()).size(15).class(cosmic::theme::Text::Color(c)),
@@ -192,7 +192,7 @@ impl IpApplet {
         }
 
         if !has_any {
-            col = col.push(cosmic::widget::text("Inga aktiva granssnitt").size(12));
+            col = col.push(cosmic::widget::text("No active interfaces").size(12));
         }
         col.into()
     }
@@ -201,7 +201,7 @@ impl IpApplet {
         let muted = cosmic::theme::Text::Color(Color::from_rgb(0.55, 0.55, 0.55));
         let mut col = cosmic::widget::column::with_capacity(24).spacing(4).padding([10, 16]);
 
-        col = col.push(cosmic::widget::text("VISA GRANSSNITT").size(11).class(muted.clone()));
+        col = col.push(cosmic::widget::text("SHOW INTERFACES").size(11).class(muted.clone()));
         for iface in KNOWN_INTERFACES {
             let name = iface.to_string();
             let enabled = self.config.enabled_interfaces.contains(&name);
@@ -214,15 +214,15 @@ impl IpApplet {
         }
 
         col = col.push(cosmic::widget::divider::horizontal::default());
-        col = col.push(cosmic::widget::text("PUBLIK IP").size(11).class(muted.clone()));
+        col = col.push(cosmic::widget::text("PUBLIC IP").size(11).class(muted.clone()));
         col = col.push(
             cosmic::widget::toggler(self.config.show_public_ip)
-                .label("Visa publik IP")
+                .label("Show Public IP")
                 .on_toggle(Message::TogglePublicIp)
         );
 
         if self.config.show_public_ip {
-            col = col.push(cosmic::widget::text("Tjanst").size(11).class(muted.clone()));
+            col = col.push(cosmic::widget::text("SERVICE").size(11).class(muted.clone()));
             for service in PublicIpService::all() {
                 let sel = self.config.public_ip_service == service;
                 let lbl = format!("{}{}", if sel { "* " } else { "  " }, service.label());
@@ -235,7 +235,7 @@ impl IpApplet {
         }
 
         col = col.push(cosmic::widget::divider::horizontal::default());
-        col = col.push(cosmic::widget::text("UPPDATERINGSINTERVALL").size(11).class(muted.clone()));
+        col = col.push(cosmic::widget::text("REFRESH RATE").size(11).class(muted.clone()));
         let mut rr = cosmic::widget::row::with_capacity(5).spacing(4);
         for &rate in REFRESH_RATES {
             let sel = self.config.refresh_rate_secs == rate;
@@ -247,7 +247,7 @@ impl IpApplet {
         col = col.push(rr);
 
         col = col.push(cosmic::widget::divider::horizontal::default());
-        col = col.push(cosmic::widget::text("TEXTFARG").size(11).class(muted.clone()));
+        col = col.push(cosmic::widget::text("TEXT COLOR").size(11).class(muted.clone()));
         for tc in TextColor::all() {
             let sel = self.config.text_color == tc;
             let lbl = format!("{}{}", if sel { "* " } else { "  " }, tc.label());
@@ -280,7 +280,7 @@ async fn fetch_network_ips() -> HashMap<String, String> {
 async fn fetch_public_ip(url: String) -> String {
     match reqwest::get(&url).await {
         Ok(resp) => resp.text().await.unwrap_or_default().trim().to_string(),
-        Err(_) => "Ej tillganglig".to_string(),
+        Err(_) => "Not available".to_string(),
     }
 }
 
