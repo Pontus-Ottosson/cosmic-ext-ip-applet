@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Installations-skript för cosmic-ip-applet
-# Kör som vanlig användare (inte root), sudo används automatiskt vid behov.
+# Installation script for cosmic-ip-applet
+# To be run as normal user, sudo permissions called for when needed
 
 set -e
 
@@ -11,18 +11,13 @@ echo "=== Bygger cosmic-ip-applet (release) ==="
 cargo build --release
 
 echo ""
-echo "=== Installerar binär ==="
+echo "=== Installing binary ==="
 sudo install -Dm755 "target/release/$BINARY_NAME" "/usr/bin/$BINARY_NAME"
 
-echo "=== Installerar .desktop-fil ==="
+echo "=== Installing .desktop-file ==="
 sudo install -Dm644 "data/$APP_ID.desktop" "/usr/share/applications/$APP_ID.desktop"
 
 echo ""
-echo "=== Klart! ==="
+echo "=== Done! ==="
 echo ""
-echo "För att lägga till appleten i COSMIC-panelen:"
-echo "  1. Högerklicka på panelen"
-echo "  2. Välj 'Panel-inställningar' → 'Applets'"
-echo "  3. Hitta 'IP Applet' i listan och lägg till den"
-echo ""
-echo "Tips: Om du vill avinstallera, kör ./uninstall.sh"
+echo "To uninstall, run ./uninstall.sh"
