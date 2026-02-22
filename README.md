@@ -52,6 +52,21 @@ chmod +x install.sh
 
 Skriptet bygger projektet och installerar det automatiskt.
 
+Här är en färdig .desktop fil som ska ligga här /usr/share/applications/com.example.CosmicIpApplet.desktop:
+
+```bash
+[Desktop Entry]
+Name=IP Applet
+Comment=Visar nätverks-IP i panelen
+Exec=cosmic-ip-applet
+Icon=network-wired-symbolic
+Terminal=false
+Type=Application
+Categories=Cosmic;Applet;
+X-CosmicApplet=true
+```
+
+
 ---
 
 ## Lägga till i COSMIC-panelen
