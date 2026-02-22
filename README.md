@@ -2,6 +2,9 @@
 
 En COSMIC-panel-applet som visar dina IPv4-adresser direkt i panelen.
 
+<img width="584" height="217" alt="image" src="https://github.com/user-attachments/assets/c6aa43cc-0658-4cc6-9907-c1621a4a7c16" />
+
+
 ## Funktioner
 
 - **Lokala IP-adresser** för `eth0`, `wlan0` och `tun0` (visas bara om de är aktiva)
