@@ -66,7 +66,7 @@ The script builds the project and installs it automatically.
 Ensure you have all build-dependencies installed (see above). `libcosmic` is downloaded automatically from GitHub during the build.
 
 **Applet is not visible in the list:**  
-Verify that the .desktop file has been copied: `ls /usr/share/applications/io.github.Pontus-Ottosson.CosmicIpApplet.desktop`
+Verify that the .desktop file has been copied: `ls /usr/share/applications/io.github.Pontus-Ottosson.CosmicIpApplet.desktop`  
 And this should be the contents of the file:
 
 ```bash
