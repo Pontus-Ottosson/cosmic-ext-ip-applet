@@ -7,12 +7,13 @@ This project is _**heavily vibe coded**_ so if you are allergic to that, stay aw
 
 ## Features
 
-- **Local IP addresses** for `eth0`, `wlan0`, and `tun0` (only displayed if active).
+- **Automatically detects all** active network interfaces with an IPv4 address.
+- **Local IP addresses displayed** per interface (`eth0`, `wlan0` etc.) and only shown if active.
 - **Public IP address** fetched from your choice of service.
+- **Easy to copy IP address** to the clipboard.
 - **Auto-refresh** every 10 seconds (configurable).
-- **Clickable popup** with detailed info and settings.
 - **Built-in settings:**
-  - Select which interfaces to display.
+  - Toggle which interfaces to display.
   - Choose text color (White, Green, Cyan, Yellow, Orange, Red, or Default).
   - Select service for Public IP (ifconfig.io, ipify.org, etc.).
   - Set update interval (5, 10, 15, 30, or 60 seconds).
@@ -53,19 +54,6 @@ chmod +x install.sh
 ./install.sh
 ```
 The script builds the project and installs it automatically.  
-Should you run into trouble with the applet not showing up, make sure that the .desktop file is correct.  
-The following `.desktop` file should be located at `/usr/share/applications/com.example.CosmicIpApplet.desktop:`
-```bash
-[Desktop Entry]
-Name=IP Applet
-Comment=Shows IP addresses in COSMIC panel
-Exec=cosmic-ip-applet
-Icon=network-wired-symbolic
-Terminal=false
-Type=Application
-Categories=Cosmic;Applet;
-X-CosmicApplet=true
-```
 
 ## Uninstallation
 
@@ -79,15 +67,19 @@ Ensure you have all build-dependencies installed (see above). `libcosmic` is dow
 
 **Applet is not visible in the list:**  
 Verify that the .desktop file has been copied: `ls /usr/share/applications/com.example.CosmicIpApplet.desktop`
+And this should be the contents of the file:
+
+```bash
+[Desktop Entry]
+Name=IP Applet
+Comment=Shows IP addresses in COSMIC panel
+Exec=cosmic-ip-applet
+Icon=network-wired-symbolic
+Terminal=false
+Type=Application
+Categories=Cosmic;Applet;
+X-CosmicApplet=true
+```
 
 **Public IP shows as "Unavailable":**  
 Check your internet connection. Try switching to a different service in the settings.
-
-**Adding more interfaces (e.g., eth1, wlan1):**  
-Open `src/main.rs` and find the line:
-
-```rust
-const KNOWN_INTERFACES: &[&str] = &["eth0", "wlan0", "tun0"];
-```
-
-Add your interface there, e.g., `eth1`, and rebuild with `./install.sh`.
