@@ -28,6 +28,7 @@ pub enum Message {
     SetPublicIpService(PublicIpService),
     SetRefreshRate(u64),
     SetActiveTab(SettingsTab),
+    CopyToClipboard(String),
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -112,6 +113,9 @@ impl cosmic::Application for IpApplet {
             }
             Message::SetRefreshRate(r) => { self.config.refresh_rate_secs = r; }
             Message::SetActiveTab(t) => { self.active_tab = t; }
+            Message::CopyToClipboard(text) => {
+                return cosmic::iced::clipboard::write::<Action<Message>>(text);
+            }
         }
         Task::none()
     }
@@ -171,8 +175,17 @@ impl IpApplet {
                         Some(c) => cosmic::widget::text(ip.as_str()).size(15).class(cosmic::theme::Text::Color(c)),
                         None    => cosmic::widget::text(ip.as_str()).size(15),
                     };
+                    let ip_clone = ip.clone();
+                    let copy_btn = self.core.applet.icon_button("edit-copy-symbolic")
+                        .on_press(Message::CopyToClipboard(ip_clone));
+                    let ip_row = cosmic::widget::row::with_children(vec![
+                        val.into(),
+                        copy_btn.into(),
+                    ])
+                    .align_y(cosmic::iced::Alignment::Center)
+                    .spacing(4);
                     col = col.push(
-                        cosmic::widget::column::with_children(vec![label.into(), val.into()]).spacing(1)
+                        cosmic::widget::column::with_children(vec![label.into(), ip_row.into()]).spacing(1)
                     );
                 }
             }
@@ -186,8 +199,16 @@ impl IpApplet {
                 Some(c) => cosmic::widget::text(self.public_ip.as_str()).size(15).class(cosmic::theme::Text::Color(c)),
                 None    => cosmic::widget::text(self.public_ip.as_str()).size(15),
             };
+            let copy_btn = self.core.applet.icon_button("edit-copy-symbolic")
+                .on_press(Message::CopyToClipboard(self.public_ip.clone()));
+            let ip_row = cosmic::widget::row::with_children(vec![
+                val.into(),
+                copy_btn.into(),
+            ])
+            .align_y(cosmic::iced::Alignment::Center)
+            .spacing(4);
             col = col.push(
-                cosmic::widget::column::with_children(vec![label.into(), val.into()]).spacing(1)
+                cosmic::widget::column::with_children(vec![label.into(), ip_row.into()]).spacing(1)
             );
         }
 
