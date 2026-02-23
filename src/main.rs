@@ -11,8 +11,7 @@ use cosmic::{Action, Element, Task};
 use std::collections::HashMap;
 use std::time::Duration;
 
-const APP_ID: &str = "com.example.CosmicIpApplet";
-const KNOWN_INTERFACES: &[&str] = &["eth0", "wlan0", "tun0"];
+const APP_ID: &str = "io.github.Pontus-Ottosson.CosmicIpApplet";
 const REFRESH_RATES: &[u64] = &[5, 10, 15, 30, 60];
 
 #[derive(Debug, Clone)]
@@ -39,6 +38,7 @@ pub struct IpApplet {
     popup: Option<Id>,
     main_window_id: Id,
     network_ips: HashMap<String, String>,
+    known_interfaces: Vec<String>,
     public_ip: String,
     config: Config,
     active_tab: SettingsTab,
@@ -59,6 +59,7 @@ impl cosmic::Application for IpApplet {
         let app = Self {
             core, popup: None, main_window_id,
             network_ips: HashMap::new(),
+            known_interfaces: Vec::new(),
             public_ip: "Fetching...".to_string(),
             config: Config::default(),
             active_tab: SettingsTab::Info,
@@ -88,7 +89,25 @@ impl cosmic::Application for IpApplet {
                 };
             }
             Message::PopupClosed(id) => { if self.popup == Some(id) { self.popup = None; } }
-            Message::NetworkIpsUpdated(ips) => { self.network_ips = ips; }
+            Message::NetworkIpsUpdated(ips) => {
+                // Sync known_interfaces: keep stable sort, add new ones, remove gone ones
+                let mut new_ifaces: Vec<String> = ips.keys().cloned().collect();
+                new_ifaces.sort();
+                // Auto-enable any interface we haven't seen before
+                for iface in &new_ifaces {
+                    if !self.known_interfaces.contains(iface) {
+                        self.config.enabled_interfaces.insert(iface.clone());
+                    }
+                }
+                // Remove interfaces that no longer exist from enabled set
+                self.known_interfaces.retain(|i| new_ifaces.contains(i));
+                for iface in &new_ifaces {
+                    if !self.known_interfaces.contains(iface) {
+                        self.known_interfaces.push(iface.clone());
+                    }
+                }
+                self.network_ips = ips;
+            }
             Message::PublicIpUpdated(ip) => { self.public_ip = ip; }
             Message::Tick => {
                 let url = self.config.public_ip_service.url().to_string();
@@ -165,11 +184,11 @@ impl IpApplet {
         let mut col = cosmic::widget::column::with_capacity(8).spacing(8).padding([12, 16]);
         let mut has_any = false;
 
-        for iface in KNOWN_INTERFACES {
-            if self.config.enabled_interfaces.contains(*iface) {
-                if let Some(ip) = self.network_ips.get(*iface) {
+        for iface in &self.known_interfaces {
+            if self.config.enabled_interfaces.contains(iface.as_str()) {
+                if let Some(ip) = self.network_ips.get(iface) {
                     has_any = true;
-                    let label = cosmic::widget::text(*iface).size(11)
+                    let label = cosmic::widget::text(iface.as_str()).size(11)
                         .class(cosmic::theme::Text::Color(Color::from_rgb(0.55, 0.55, 0.55)));
                     let val = match uc {
                         Some(c) => cosmic::widget::text(ip.as_str()).size(15).class(cosmic::theme::Text::Color(c)),
@@ -223,8 +242,8 @@ impl IpApplet {
         let mut col = cosmic::widget::column::with_capacity(24).spacing(4).padding([10, 16]);
 
         col = col.push(cosmic::widget::text("SHOW INTERFACES").size(11).class(muted.clone()));
-        for iface in KNOWN_INTERFACES {
-            let name = iface.to_string();
+        for iface in &self.known_interfaces {
+            let name = iface.clone();
             let enabled = self.config.enabled_interfaces.contains(&name);
             let n = name.clone();
             col = col.push(
@@ -287,11 +306,10 @@ async fn fetch_network_ips() -> HashMap<String, String> {
     let mut result = HashMap::new();
     if let Ok(ifaces) = if_addrs::get_if_addrs() {
         for iface in ifaces {
-            let name = iface.name.clone();
-            if KNOWN_INTERFACES.contains(&name.as_str()) {
-                if let if_addrs::IfAddr::V4(v4) = iface.addr {
-                    result.insert(name, v4.ip.to_string());
-                }
+            // Skip loopback and any interface without an IPv4 address
+            if iface.is_loopback() { continue; }
+            if let if_addrs::IfAddr::V4(v4) = iface.addr {
+                result.insert(iface.name, v4.ip.to_string());
             }
         }
     }
