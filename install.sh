@@ -5,9 +5,9 @@
 set -e
 
 BINARY_NAME="cosmic-ip-applet"
-APP_ID="com.example.CosmicIpApplet"
+APP_ID="io.github.Pontus-Ottosson.CosmicIpApplet"
 
-echo "=== Bygger cosmic-ip-applet (release) ==="
+echo "=== Building cosmic-ip-applet (release) ==="
 cargo build --release
 
 echo ""
