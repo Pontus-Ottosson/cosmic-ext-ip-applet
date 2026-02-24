@@ -2,8 +2,9 @@
 A COSMIC panel applet that displays your IPv4 addresses directly in the panel.  
 This project is _**heavily vibe coded**_ so if you are allergic to that, stay away from this.
 
-<img width="555" height="300" alt="image" src="https://github.com/user-attachments/assets/ad680334-6cd9-4274-848f-9d1399990086" />
-<img width="557" height="505" alt="image" src="https://github.com/user-attachments/assets/73ed0f91-8e9d-47be-87c8-f9e7ebc7678e" />
+<img width="578" height="313" alt="image" src="https://github.com/user-attachments/assets/88f7a91c-4d34-4294-b4c4-bce5eefd0be4" />
+<img width="567" height="510" alt="image" src="https://github.com/user-attachments/assets/d753a547-9108-4ab4-9451-089027e127a6" />
+
 
 ## Features
 
