@@ -140,7 +140,7 @@ impl cosmic::Application for IpApplet {
     }
 
     fn view(&self) -> Element<'_, Self::Message> {
-        self.core.applet.icon_button("network-wired-symbolic")
+        self.core.applet.icon_button("globe-alt2-symbolic")
             .on_press(Message::TogglePopup)
             .into()
     }
