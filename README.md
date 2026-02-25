@@ -1,4 +1,4 @@
-# cosmic-ip-applet
+# cosmic-ext-ip-applet
 A COSMIC panel applet that displays your IPv4 addresses directly in the panel.  
 This project is _**heavily vibe coded**_ so if you are allergic to that, stay away from this.
 
